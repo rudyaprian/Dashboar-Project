@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIRAS | Dashboard Monitoring</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">MIRAS</div>
+        <div>
+          <strong>MIRAS</strong>
+          <span>Monitoring Integrated Report & Analytics Services</span>
+        </div>
+      </div>
+      <div class="nav-label">MENU</div>
+      <nav>
+        <button class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Dashboard</button>
+        <button class="nav-item" data-view="projects"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Data Project</button>
+        <button class="nav-item" data-view="crsr"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12A9 9 0 0 1 18.5 5.8L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg>CR/SR Monitoring</button>
+        <button class="nav-item" data-view="alerts"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Contract Alerts <span id="alertBadge" class="nav-badge">0</span></button>
+        <a class="nav-logout" href="Login.html"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Logout</a>
+      </nav>
+      <div class="side-note">
+        <strong><span class="live-dot"></span>Source</strong>
+        <span>Main File Excel Pending Project</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PROJECT CONTROL CENTER TEAM RR</p>
+          <h1 id="pageTitle">Dashboard Project RR Team</h1>
+          <p class="subtitle">Integrated Project & CR/SR Monitoring <span id="todayLabel"></span></p>
+        </div>
+        <div class="top-actions">
+          <button class="theme-btn" id="themeBtn" title="Ganti tema" aria-label="Ganti tema"><svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+          <button class="btn secondary" id="resetBtn">Reset Filter</button>
+          <button class="btn secondary" id="notificationBtn">🔔 Alerts <span class="count" id="topAlertCount">0</span></button>
+          <button class="btn primary" id="addBtn">+ Tambah Data</button>
+        </div>
+      </header>
+
+      <section class="filters">
+        <div class="field search-field">
+          <label>Pencarian</label>
+          <input id="search" placeholder="Cari project, No Alisa, AM, user...">
+        </div>
+        <div class="field">
+          <label>Nama AM</label>
+          <select id="amFilter"><option value="">Semua AM</option></select>
+        </div>
+        <div class="field">
+          <label>Status Project</label>
+          <select id="statusFilter"><option value="">Semua Status</option></select>
+        </div>
+        <div class="field">
+          <label>Product</label>
+          <select id="productFilter"><option value="">Semua Product</option></select>
+        </div>
+      </section>
+
+      <!-- ================= DASHBOARD ================= -->
+      <section id="dashboardView" class="view-anim">
+        <div class="kpi-grid">
+          <article class="kpi k1"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><span>Total Project</span><strong id="kpiProjects">0</strong><small>project aktif/terdata</small></article>
+          <article class="kpi k2"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span>Total Nilai Kontrak</span><strong id="kpiValue">Rp 0</strong><small id="kpiValueFull">berdasarkan DATA PROJECT</small></article>
+          <article class="kpi k3"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><span>Status GO</span><strong id="kpiGo">0</strong><small id="kpiGoPct">project berstatus GO</small></article>
+          <article class="kpi k4"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12A9 9 0 0 1 18.5 5.8L21 8"/></svg></div><span>CR/SR</span><strong id="kpiCrsr">0</strong><small>project yang punya data CR/SR</small></article>
+        </div>
+
+        <div class="grid g-4-8">
+          <section class="card">
+            <div class="card-head"><div><h2>Status Project</h2><p>Distribusi status dari data project.</p></div></div>
+            <div id="statusBars" class="chart"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div><h2>Kontrak Berakhir per Bulan</h2><p>Total nilai kontrak berdasarkan bulan akhir JANGKA WAKTU.</p></div></div>
+            <div id="chartExpiry" class="chart"></div>
+          </section>
+        </div>
+
+        <div class="grid g-3">
+          <section class="card">
+            <div class="card-head"><div><h2>Nilai per Product</h2><p>Total nilai kontrak tiap product.</p></div></div>
+            <div id="chartProduct" class="chart"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div><h2>Top User / Customer</h2><p>Nilai kontrak terbesar per user.</p></div></div>
+            <div id="chartUser" class="chart"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div><h2>Business Scheme</h2><p>Komposisi jumlah project per scheme.</p></div></div>
+            <div id="chartScheme" class="chart"></div>
+          </section>
+        </div>
+
+        <div class="grid g-7-5">
+          <section class="card">
+            <div class="card-head"><div><h2>Dokumen & Progress</h2><p>Ringkasan item yang masih perlu perhatian.</p></div></div>
+            <div id="docSummary" class="doc-grid"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div><h2>Nilai per Account Manager</h2><p>Kontribusi nilai kontrak tiap AM.</p></div></div>
+            <div id="chartAM" class="chart"></div>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="card-head">
+            <div><h2>Project Terbaru / Monitoring</h2><p>Gunakan tombol detail untuk melihat gabungan data Project + CR/SR.</p></div>
+            <button class="text-btn" id="openProjects">Lihat semua →</button>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>No</th><th>No Alisa</th><th>Project</th><th>AM</th><th>Nilai Kontrak</th><th>Status</th><th>CR/SR</th><th>Aksi</th></tr></thead><tbody id="dashboardTable"></tbody></table></div>
+        </section>
+      </section>
+
+      <!-- ================= PROJECTS ================= -->
+      <section id="projectsView" class="hidden view-anim">
+        <section class="card">
+          <div class="card-head"><div><h2>Data Project</h2><p>Data utama project dari sheet DATA PROJECT.</p></div><span id="projectCount" class="pill">0 data</span></div>
+          <div class="table-wrap"><table><thead><tr>
+            <th>No</th><th>Nama AM</th><th>No Alisa</th><th>Nama Project</th><th>Product</th><th>User</th><th>Nilai Kontrak</th><th>Status</th><th>PKS</th><th>Penagihan</th><th>Aksi</th>
+          </tr></thead><tbody id="projectTable"></tbody></table></div>
+        </section>
+      </section>
+
+      <!-- ================= ALERTS ================= -->
+      <section id="alertsView" class="hidden view-anim">
+        <div class="kpi-grid">
+          <article class="kpi k3"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><span>Aman</span><strong id="alertSafe">0</strong><small>&gt; 90 hari</small></article>
+          <article class="kpi k5"><div class="kpi-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><span>Reminder 3 Bulan</span><strong id="alert90">0</strong><small>≤ 90 hari</small></article>
+          <article class="kpi k4"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><span>Urgent</span><strong id="alert30">0</strong><small>≤ 30 hari</small></article>
+          <article class="kpi k6"><div class="kpi-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></div><span>Expired</span><strong id="alertExpired">0</strong><small>jangka waktu habis</small></article>
+        </div>
+        <div class="grid g-5-7">
+          <section class="card">
+            <div class="card-head"><div><h2>Kondisi Kontrak</h2><p>Sebaran level alert seluruh kontrak.</p></div></div>
+            <div id="chartAlert" class="chart"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div><h2>Prioritas Tindak Lanjut</h2><p>Kontrak dengan sisa waktu paling kritis.</p></div></div>
+            <div id="chartDays" class="chart"></div>
+          </section>
+        </div>
+        <section class="card">
+          <div class="card-head"><div><h2>Contract & Project Alerts</h2><p>Reminder berdasarkan tanggal akhir pada kolom JANGKA WAKTU.</p></div><button class="btn primary small" id="emailAllBtn">📧 Email Semua</button></div>
+          <div id="alertList" class="alert-list"></div>
+        </section>
+      </section>
+
+      <!-- ================= CR/SR ================= -->
+      <section id="crsrView" class="hidden view-anim">
+        <div class="kpi-grid">
+          <article class="kpi k1"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12A9 9 0 0 1 18.5 5.8L21 8"/></svg></div><span>Total CR/SR</span><strong id="kCrsrTotal">0</strong><small>record pada sheet CR/SR</small></article>
+          <article class="kpi k2"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span>Revenue Awal</span><strong id="kCrsrAwal">Rp 0</strong><small>sebelum CR/SR</small></article>
+          <article class="kpi k4"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><span>Revenue Setelah</span><strong id="kCrsrSetelah">Rp 0</strong><small>setelah CR/SR (yang sudah terisi)</small></article>
+          <article class="kpi k3"><div class="kpi-ico"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><span>CR/SR Done</span><strong id="kCrsrDone">0</strong><small id="kCrsrDoneSub">selesai diproses</small></article>
+        </div>
+        <div class="grid g-7-5">
+          <section class="card">
+            <div class="card-head"><div><h2>Revenue Awal vs Setelah CR/SR</h2><p>Per No Alisa. Nilai 0 berarti belum terisi.</p></div></div>
+            <div id="chartCrsrRev" class="chart"></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div><h2>Status CR/SR</h2><p>Komposisi status proses.</p></div></div>
+            <div id="chartCrsrStatus" class="chart"></div>
+          </section>
+        </div>
+        <section class="card">
+          <div class="card-head"><div><h2>GPM Sebelum vs Sesudah</h2><p>Gross Profit Margin (%) per record. GPM kosong/0 tidak digambar.</p></div></div>
+          <div id="chartGpm" class="chart"></div>
+        </section>
+        <section class="card">
+          <div class="card-head">
+            <div><h2>CR/SR Monitoring</h2><p>Data dari sheet DATA PROJECT CRSR yang terhubung dengan No Alisa.</p></div>
+            <div class="card-tools"><span id="crsrCount" class="pill">0 data</span><button class="btn primary small" id="addCrsrBtn">+ Tambah CR/SR</button></div>
+          </div>
+          <div class="table-wrap"><table><thead><tr>
+            <th>No</th><th>AM</th><th>Proses</th><th>No Alisa</th><th>Project</th><th>GPM Before</th><th>GPM After</th><th>Revenue Awal</th><th>Revenue Setelah</th><th>Status</th><th>Ket</th><th>Aksi</th>
+          </tr></thead><tbody id="crsrTable"></tbody></table></div>
+        </section>
+      </section>
+
+      <footer>&copy; 2026 Dashboard Rudy</footer>
+    </main>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <div class="modal" id="modal">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div><p class="eyebrow">DATA MANAGEMENT</p><h2 id="modalTitle">Tambah Data Project</h2></div>
+        <button class="close" id="closeModal">&times;</button>
+      </div>
+      <form id="projectForm">
+        <input type="hidden" id="editIndex">
+        <div class="form-grid">
+          <div class="field"><label>No</label><input name="NO" type="number" min="1"></div>
+          <div class="field"><label>Nama AM</label><input name="NAMA AM"></div>
+          <div class="field"><label>Email PIC / AM</label><input name="EMAIL AM" type="email" placeholder="pic@company.com"></div>
+          <div class="field"><label>WhatsApp PIC / AM</label><input name="WHATSAPP AM" placeholder="62812xxxxxxx"></div>
+          <div class="field"><label>No Alisa</label><input name="NO ALISA"></div>
+          <div class="field wide"><label>Nama Project *</label><input name="NAMA PROJECT" required></div>
+          <div class="field"><label>Product</label><input name="PRODUCT"></div>
+          <div class="field"><label>User</label><input name="USER"></div>
+          <div class="field"><label>Nilai Kontrak</label><input name="NILAI KONTRAK" type="number" min="0"></div>
+          <div class="field"><label>Jangka Waktu</label><input name="JANGKA WAKTU"></div>
+          <div class="field"><label>Keterangan Rev</label><input name="KETERANGAN REV"></div>
+          <div class="field"><label>Business Scheme</label><input name="BUSINESS SCHEME"></div>
+          <div class="field"><label>Status / Progress</label><input name="STATUS/PROGRESS"></div>
+          <div class="field"><label>ALISA</label><input name="ALISA"></div>
+          <div class="field"><label>Bridging Document</label><input name="BRIDGING DOCUMENT (MoU/BA)"></div>
+          <div class="field"><label>Dokumen Deal</label><input name="DOKUMEN DEAL"></div>
+          <div class="field"><label>PKS</label><input name="PKS"></div>
+          <div class="field"><label>Closing Document</label><input name="CLOSING DOCUMENT"></div>
+          <div class="field"><label>Penagihan</label><input name="PENAGIHAN"></div>
+          <div class="field wide"><label>Keterangan Saat Ini</label><textarea name="KETERANGAN SAAT INI"></textarea></div>
+        </div>
+        <div class="modal-foot"><button type="button" class="btn secondary" id="cancelModal">Batal</button><button class="btn primary">Simpan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="crsrModal">
+    <div class="modal-backdrop" id="crsrBackdrop"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div><p class="eyebrow">CR/SR MANAGEMENT</p><h2 id="crsrModalTitle">Tambah Data CR/SR</h2></div>
+        <button class="close" id="closeCrsr">&times;</button>
+      </div>
+      <form id="crsrForm">
+        <input type="hidden" id="editCrsrIndex">
+        <div class="form-grid">
+          <div class="field"><label>No</label><input name="NO" type="number" min="1"></div>
+          <div class="field"><label>Nama AM</label><input name="NAMA AM"></div>
+          <div class="field"><label>Proses</label><input name="PROSES" placeholder="CR / SR"></div>
+          <div class="field"><label>No Alisa</label><input name="NO ALISA"></div>
+          <div class="field wide"><label>Project</label><input name="PROJECT"></div>
+          <div class="field"><label>GPM Before CR/SR</label><input name="GPM BEFORE CR/SR"></div>
+          <div class="field"><label>GPM After CR/SR</label><input name="GPM AFTER CR/SR"></div>
+          <div class="field"><label>Revenue Awal</label><input name="REVENUE AWAL" type="number" min="0"></div>
+          <div class="field"><label>Revenue Setelah CR/SR</label><input name="REVENUE SETELAH CR/SR" type="number" min="0"></div>
+          <div class="field"><label>Status CR/SR</label><input name="STATUS CR/SR"></div>
+          <div class="field"><label>Tanggal Submit</label><input name="TGL SUBMIT"></div>
+          <div class="field"><label>Target Closing</label><input name="TARGET CLOSING"></div>
+          <div class="field"><label>Actual Closing</label><input name="ACTUAL CLOSING"></div>
+          <div class="field"><label>Keterangan</label><input name="KET"></div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn secondary" id="cancelCrsr">Batal</button>
+          <button class="btn primary">Simpan CR/SR</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="detailModal">
+    <div class="modal-backdrop" id="detailBackdrop"></div>
+    <div class="modal-card large">
+      <div class="modal-head"><div><p class="eyebrow">PROJECT DETAIL</p><h2 id="detailTitle">Detail Project</h2></div><button class="close" id="closeDetail">&times;</button></div>
+      <div id="detailBody" class="detail-body"></div>
+    </div>
+  </div>
+
+<script>
+const BASE = [{"master": {"NO": 1, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P253751-01-00", "NAMA PROJECT": "Pengadaan Layanan Contact Center Omnichannel YAKES 2025", "PRODUCT": "CRM", "USER": "Yakes", "NILAI KONTRAK": 1024769364, "JANGKA WAKTU": "15 Januari 2025 sd 14 Januari 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 2, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P243671-01-00", "NAMA PROJECT": "Jasa Pekerjaan Penunjang DIT Area Jakarta Tahun 2025", "PRODUCT": "SSO", "USER": "DIT", "NILAI KONTRAK": 9988610320, "JANGKA WAKTU": "1 Januari 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": [{"NO": 2, "NAMA AM": "Radhitya RIvano", "PROSES": "SR", "NO ALISA": "P243671-01-00", "PROJECT": "Jasa Pekerjaan Penunjang DIT Area Jakarta Tahun 2025", "GPM BEFORE CR/SR": 0.1145, "GPM AFTER CR/SR": 0, "REVENUE AWAL": 9988610323, "REVENUE SETELAH CR/SR": 0, "STATUS CR/SR": "Done", "JANGKA WAKTU": "1 Januari 2025 - 31 Desember 2025", "KET": "Review FInance"}]}, {"master": {"NO": 3, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P243670-01-00", "NAMA PROJECT": "Jasa Pekerjaan Penunjang DIT Area Bandung Tahun 2025", "PRODUCT": "SSO", "USER": "DIT", "NILAI KONTRAK": 9574172736, "JANGKA WAKTU": "1 Januari 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": [{"NO": 4, "NAMA AM": "Radhitya RIvano", "PROSES": "SR", "NO ALISA": "P243670-01-00 ", "PROJECT": "Jasa Pekerjaan Penunjang DIT Area Bandung Tahun 2025", "GPM BEFORE CR/SR": "10,03%", "GPM AFTER CR/SR": "10,11%", "REVENUE AWAL": 9574172736, "REVENUE SETELAH CR/SR": 9446471426, "STATUS CR/SR": "Done", "JANGKA WAKTU": "1 Januari 2025 - 31 Desember 2025", "KET": "Review FInance"}]}, {"master": {"NO": 4, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P243669-01-00", "NAMA PROJECT": "Jasa Pekerjaan Penunjang DIT IS Regional Tahun 2025", "PRODUCT": "SSO", "USER": "DIT", "NILAI KONTRAK": 6173944092, "JANGKA WAKTU": "1 Januari 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": [{"NO": 3, "NAMA AM": "Radhitya RIvano", "PROSES": "SR", "NO ALISA": "P243669-01-00", "PROJECT": "Jasa Pekerjaan Penunjang DIT IS Regional Tahun 2025", "GPM BEFORE CR/SR": "9,66%", "GPM AFTER CR/SR": "9,76%", "REVENUE AWAL": 6400094900, "REVENUE SETELAH CR/SR": 0, "STATUS CR/SR": "Done", "JANGKA WAKTU": "1 Januari 2025 - 31 Desember 2025", "KET": "Review FInance"}]}, {"master": {"NO": 5, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P253706-01-00", "NAMA PROJECT": "Amandemen Kedua Terhadap Pengadaan Jasa Layanan QC 2 2024", "PRODUCT": "CRM", "USER": "TIF", "NILAI KONTRAK": 2369343224, "JANGKA WAKTU": "1 Januari 2025 sd 28 Februari 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 6, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P243645-01-00", "NAMA PROJECT": "Surat Pesanan-14 (SP#14) Jasa Pemborongan Pekerjaan Penunjang", "PRODUCT": "CRM", "USER": "TIF", "NILAI KONTRAK": 8130084068, "JANGKA WAKTU": "1 Januari 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 7, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P243510-02-00", "NAMA PROJECT": "SURAT PESANAN-1 (SP#1) PENGADAAN JASA LAYANAN CONTACT CENTER DAN TENAGA PENUNJANG", "PRODUCT": "CRM", "USER": "SDA", "NILAI KONTRAK": 64300968068, "JANGKA WAKTU": "1 Januari 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 8, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P243509-01-00", "NAMA PROJECT": "Surat Pesanan SP#1 Pekerjaan Pengelolaan Engineer On Site (EOS) dan Performance Analytic Reporting Staff Untuk Customer EBIS", "PRODUCT": "CRM", "USER": "SDA", "NILAI KONTRAK": 74765799180, "JANGKA WAKTU": "1 Januari 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 9, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P243483-02-00", "NAMA PROJECT": "Surat Pesanan-13 (SP#13) Managed Service Employee HR Adm And benefit Pekerja TIF", "PRODUCT": "CRM", "USER": "TIF", "NILAI KONTRAK": 552734515, "JANGKA WAKTU": "1 Desember 2024 sd 28 Februari 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 10, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P253961-00-00", "NAMA PROJECT": "Pengadaan Penyediaan Jasa Manage Service Quality Control Layanan Connectivity EBIS Periode Q1 2025", "PRODUCT": "CRM", "USER": "SDA", "NILAI KONTRAK": 338872208, "JANGKA WAKTU": "1 Februari 2025 sd 31 Maret 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 11, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P254018-04-00", "NAMA PROJECT": "SURAT PESANAN-15 (SP#15) JASA PEMBORONGAN PEKERJAAN PENUNJANG TIF", "PRODUCT": "SSO", "USER": "TIF", "NILAI KONTRAK": 13575215140, "JANGKA WAKTU": "1 Maret 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": [{"NO": 1, "NAMA AM": "Radhitya RIvano", "PROSES": "SR", "NO ALISA": "P254018-04-00", "PROJECT": "SURAT PESANAN-15 (SP#15) JASA PEMBORONGAN PEKERJAAN PENUNJANG TIF", "GPM BEFORE CR/SR": "10,71%", "GPM AFTER CR/SR": "10,71%", "REVENUE AWAL": 13575215140, "REVENUE SETELAH CR/SR": 13575215140, "STATUS CR/SR": "Done", "JANGKA WAKTU": "1 Februari 2025 - 31 Januari 2026", "KET": "SR Perubahan apps type Pakser dari CA menjadi Purchase"}, {"NO": 9, "NAMA AM": "Radhitya RIvano", "PROSES": "SR", "NO ALISA": "P254018-04-00", "PROJECT": "Surat Pesanan-15 (SP#15) Jasa Pemborongan Pekerjaan Penunjang TIF", "GPM BEFORE CR/SR": 0, "GPM AFTER CR/SR": 0, "REVENUE AWAL": 13575215140, "REVENUE SETELAH CR/SR": 11650717562, "STATUS CR/SR": "Review Finance", "JANGKA WAKTU": "1 Maret 2025 - 31 Desember 2025", "KET": null}]}, {"master": {"NO": 12, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P253979-05-00", "NAMA PROJECT": "Surat Pesanan-16 (SP#16) Managed Service TIOC TIF", "PRODUCT": "SSO", "USER": "TIF", "NILAI KONTRAK": 27000000000, "JANGKA WAKTU": "1 Maret 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 13, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P254175-01-00", "NAMA PROJECT": "Surat Pesanan 5 (SP#5) Jasa Pemborongan Pekerjaan Penunjang Sub Direktorat CYS-NITS", "PRODUCT": "CRM", "USER": "NITS", "NILAI KONTRAK": 3088384082, "JANGKA WAKTU": "1 April 2025 sd 31 Maret 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 14, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F254391-00-00 ", "NAMA PROJECT": "Managed Service Employee HR Adm and Benefit Pekerja Sekretaris Subdit Sustainability periode Agustus - November 2025", "PRODUCT": "SSO", "USER": "HCSO", "NILAI KONTRAK": 39201516, "JANGKA WAKTU": "1 Agustus 2025 sd 30 November 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 15, "NAMA AM": "RAHMA AULIA", "NO ALISA": "F254295-01-00", "NAMA PROJECT": "Pengadaan Talent Management Telkom DBT", "PRODUCT": "SSO", "USER": "DBT", "NILAI KONTRAK": 17058118780, "JANGKA WAKTU": "1 Juli 2025 sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 16, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P254540-01-00", "NAMA PROJECT": "Surat Pesanan-40 (SP#40) Jasa Pekerjaan Penunjang Umum dan Administrasi Subdep Sustainability", "PRODUCT": "SSO", "USER": "GPC", "NILAI KONTRAK": 34930352, "JANGKA WAKTU": "1 September sd 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 17, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "P254600-01-00 ", "NAMA PROJECT": "Surat Pesanan Pekerjaan Penyimpanan dan Pengelolaan Dokumen PT Telkom Indonesia (Persero) Tbk", "PRODUCT": "SSO", "USER": null, "NILAI KONTRAK": 19970000, "JANGKA WAKTU": "17 September 2025 sd 16 Agustus 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 18, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F254628-01-00", "NAMA PROJECT": "PENGADAAN SARANA PENDUKUNG ENGINEER ON SITE (EOS) TENESA TAHAP III TAHUN 2025", "PRODUCT": "CRM", "USER": "SDA", "NILAI KONTRAK": 445305960, "JANGKA WAKTU": "1 Oktober 2025 - 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 19, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F254375-01-00", "NAMA PROJECT": "Pengadaan Teknisi dan Support Operasional (Sarana Kerja) untuk QC-2 PSB", "PRODUCT": "CRM", "USER": "TA", "NILAI KONTRAK": 2836889625, "JANGKA WAKTU": "1 Maret - 31 Mei 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 20, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F254416-01-00", "NAMA PROJECT": "Support Operasional (Sarana Kerja) untuk QC-2 PSB", "PRODUCT": "CRM", "USER": "TA", "NILAI KONTRAK": 476658000, "JANGKA WAKTU": "1 Juni - 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 21, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F254039-03-00", "NAMA PROJECT": "Pengadaan Jasa Pemborongan Pekerjaan Penunjang", "PRODUCT": "CRM", "USER": "TA", "NILAI KONTRAK": 5791743797, "JANGKA WAKTU": "1 Juni - 31 Desember 2025", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 22, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F254776-01-00", "NAMA PROJECT": "PRA PO] Pengadaan Managed Operational Bisnis dan Admin Support Unit Telkom DPS", "PRODUCT": "SSO", "USER": "DPS", "NILAI KONTRAK": 10080708500, "JANGKA WAKTU": "1 November 2025 - 31 Oktober 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "REC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 25, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F260452-TLKI", "NAMA PROJECT": "Pekerjaan Managed Service Administrasi Umum, Reseptionist, dan Staff Support Periode Juli 2026", "PRODUCT": "CRM", "USER": "TIF", "NILAI KONTRAK": 42960163, "JANGKA WAKTU": "1 Juli 2026 - 30 Juli 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "OTC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 26, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F260854-TLKI", "NAMA PROJECT": "Pekerjaan Managed Service Administrasi Umum, Reseptionist, dan Staff Support Periode Agustus 2026", "PRODUCT": "CRM", "USER": "TIF", "NILAI KONTRAK": 42960163, "JANGKA WAKTU": "1 Agustus 2026 - 31 Juli 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "OTC", "STATUS/PROGRESS": "GO"}, "crsr": []}, {"master": {"NO": 27, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F261194-TLKI", "NAMA PROJECT": "Pekerjaan Managed Service Administrasi Umum, Reseptionist, dan Staff Support Periode September 2026", "PRODUCT": "CRM", "USER": "TIF", "NILAI KONTRAK": 51381102, "JANGKA WAKTU": "1 September 2026 - 30 September 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "OTC", "STATUS/PROGRESS": "ON PROGRES"}, "crsr": []}, {"master": {"NO": 28, "NAMA AM": "RADHITYA RIVANO", "NO ALISA": "F260900-TIFF", "NAMA PROJECT": "Nota Pesanan Pengadaan Jasa Tenaga Kerja Outsourcing Sekretaris & Driver Direksi TIF", "PRODUCT": "CRM", "USER": "TIF", "NILAI KONTRAK": 21451368, "JANGKA WAKTU": "1 Agustus 2026 - 31 Juli 2026", "KETERANGAN REV": "DEAL", "BUSINESS SCHEME": "OTC", "STATUS/PROGRESS": "GO"}, "crsr": []}];
+let projects = JSON.parse(localStorage.getItem("aispmProjects") || "null") || BASE.map(x => x.master);
+const crsrBase = BASE.flatMap(x => x.crsr);
+let crsrData = JSON.parse(localStorage.getItem("aispmCrsrData") || "null") || crsrBase.map(x => ({...x}));
+function getCrsrData() { return crsrData; }
+let activeView = "dashboard";
+
+const $ = id => document.getElementById(id);
+const clean = v => String(v ?? "").trim();
+const money = n => new Intl.NumberFormat("id-ID", {style:"currency", currency:"IDR", maximumFractionDigits:0}).format(Number(n)||0);
+const num = n => new Intl.NumberFormat("id-ID").format(Number(n)||0);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+
+function savedCrsr() {
+  const by = {};
+  getCrsrData().forEach(x => {
+    const a = clean(x["NO ALISA"]);
+    if (a) by[a] = x;
+  });
+  return projects.map(p => {
+    const a = clean(p["NO ALISA"]);
+    return a && by[a] ? by[a] : null;
+  }).filter(Boolean);
+}
+
+function statusClass(v) {
+  const s=clean(v).toLowerCase();
+  if(s.includes("go") || s.includes("done")) return "ok";
+  if(s.includes("progress") || s.includes("not yet")) return "warn";
+  return "neutral";
+}
+
+function getFiltered() {
+  const q=clean($("search").value).toLowerCase(), am=$("amFilter").value, st=$("statusFilter").value, pr=$("productFilter").value;
+  return projects.filter(p => {
+    const blob=[p["NO ALISA"],p["NAMA PROJECT"],p["NAMA AM"],p["USER"],p["PRODUCT"]].map(clean).join(" ").toLowerCase();
+    return (!q||blob.includes(q)) && (!am||clean(p["NAMA AM"])===am) && (!st||clean(p["STATUS/PROGRESS"])===st) && (!pr||clean(p["PRODUCT"])===pr);
+  });
+}
+
+function fillFilters() {
+  const vals=(key)=>[...new Set(projects.map(x=>clean(x[key])).filter(Boolean))].sort();
+  [["amFilter","NAMA AM","Semua AM"],["statusFilter","STATUS/PROGRESS","Semua Status"],["productFilter","PRODUCT","Semua Product"]].forEach(([id,key,label])=>{
+    const s=$(id), old=s.value; s.innerHTML=`<option value="">${label}</option>`;
+    vals(key).forEach(v=>s.insertAdjacentHTML("beforeend",`<option value="${esc(v)}">${esc(v)}</option>`));
+    s.value=old;
+  });
+}
+
+function parseEndDate(value){
+  const s=clean(value).toLowerCase();
+  const months={januari:0,februari:1,maret:2,april:3,mei:4,juni:5,juli:6,agustus:7,september:8,oktober:9,november:10,desember:11};
+  const re=/(\d{1,2})\s+(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)(?:\s+(\d{4}))?/g;
+  const matches=[...s.matchAll(re)]; if(!matches.length)return null;
+  const m=matches[matches.length-1];
+  const ys=[...s.matchAll(/20\d{2}/g)];
+  const year=Number(m[3]||(ys.length?ys[ys.length-1][0]:new Date().getFullYear()));
+  return new Date(year,months[m[2]],Number(m[1]),23,59,59);
+}
+function contractAlerts(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  return projects.map((p,index)=>{const end=parseEndDate(p['JANGKA WAKTU']); if(!end)return null; const days=Math.ceil((end-today)/86400000); const level=days<0?'expired':days<=30?'urgent':days<=90?'warning':'safe'; return {...p,index,end,days,level};}).filter(Boolean);
+}
+function alertLabel(a){return a.level==='expired'?'EXPIRED':a.level==='urgent'?'URGENT':a.level==='warning'?'REMINDER 3 BULAN':'AMAN';}
+function emailAlert(a){
+  const to=clean(a['EMAIL AM'])||prompt('Masukkan email penerima:',''); if(!to)return;
+  const subject=`[MIRA ALERT] ${alertLabel(a)} - ${a['NO ALISA']||a['NAMA PROJECT']||'Project'}`;
+  const body=[`Dear PIC / Account Manager,`,'',`MIRA Dashboard memberikan alert masa berlaku project.`,``,`Project: ${a['NAMA PROJECT']||'-'}`,`No Alisa: ${a['NO ALISA']||'-'}`,`AM: ${a['NAMA AM']||'-'}`,`Jangka Waktu: ${a['JANGKA WAKTU']||'-'}`,`Status: ${alertLabel(a)}`,a.level==='expired'?`Jangka waktu sudah habis ${Math.abs(a.days)} hari.`:`Jangka waktu akan berakhir dalam ${a.days} hari.`,'','Mohon dilakukan monitoring dan tindak lanjut.','','Regards,','MIRA - Monitoring Integrated Report & Analytics'].join('\n');
+  location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+}
+function whatsappAlert(a){
+  let phone=clean(a['WHATSAPP AM']).replace(/\D/g,''); if(!phone)phone=prompt('Masukkan nomor WhatsApp (format 628xxxxxxxxxx):',''); if(!phone)return;
+  if(phone.startsWith('0'))phone='62'+phone.slice(1);
+  const msg=[`*MIRA CONTRACT ALERT*`,``,`Project: ${a['NAMA PROJECT']||'-'}`,`No Alisa: ${a['NO ALISA']||'-'}`,`AM: ${a['NAMA AM']||'-'}`,`Jangka Waktu: ${a['JANGKA WAKTU']||'-'}`,`Status: *${alertLabel(a)}*`,a.level==='expired'?`Jangka waktu sudah habis ${Math.abs(a.days)} hari.`:`Jangka waktu akan berakhir dalam ${a.days} hari.`,``,`Mohon dilakukan monitoring dan tindak lanjut.`].join('\n');
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+/* =========================================================
+   CHART TOOLKIT (SVG/HTML murni, tanpa library eksternal)
+   ========================================================= */
+const nf = (v,d=1)=>new Intl.NumberFormat("id-ID",{maximumFractionDigits:d}).format(v);
+const fmtC = n => { n=Number(n)||0; const a=Math.abs(n);
+  if(a>=1e12) return "Rp "+nf(n/1e12,2)+" T";
+  if(a>=1e9)  return "Rp "+nf(n/1e9)+" M";
+  if(a>=1e6)  return "Rp "+nf(n/1e6)+" Jt";
+  return "Rp "+nf(n,0); };
+const fmtAxis = n => { const a=Math.abs(n);
+  if(a>=1e12) return nf(n/1e12,1)+" T";
+  if(a>=1e9)  return nf(n/1e9,1)+" M";
+  if(a>=1e6)  return nf(n/1e6,0)+" Jt";
+  return nf(n,0); };
+const MONTHS=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+const catColor = i => i<6 ? `var(--c${i+1})` : "var(--c-other)";
+const STATUS_COLORS = {"go":"var(--c3)","on progres":"var(--c4)","on progress":"var(--c4)"};
+function statusColors(labels){
+  const pool=["var(--c1)","var(--c2)","var(--c5)","var(--c6)"]; let k=0;
+  return labels.map(l=>STATUS_COLORS[l.toLowerCase()] || pool[k++ % pool.length]);
+}
+const tip = (t,rows)=>`data-tip="${esc(JSON.stringify({t,r:rows}))}"`;
+const niceMax = m => { if(m<=0) return 1; const p=10**Math.floor(Math.log10(m)), n=m/p;
+  return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p; };
+const empty = msg => `<div class="chart-empty">${esc(msg||"Belum ada data untuk ditampilkan.")}</div>`;
+
+/* Donut + legend */
+function donut(items,{center="",sub="",legendVal}={}){
+  items=items.filter(i=>i.value>0);
+  const total=items.reduce((a,b)=>a+b.value,0);
+  if(!total) return empty();
+  const r=76, C=2*Math.PI*r, gap=items.length>1?3:0; let acc=0;
+  const segs=items.map(i=>{
+    const len=i.value/total*C, d=Math.max(len-gap,0.5);
+    const el=`<circle class="seg" cx="100" cy="100" r="${r}" style="stroke:${i.color}" stroke-dasharray="${d} ${C-d}" stroke-dashoffset="${-acc}" ${tip(i.label,[[i.color,i.tipLabel||"Jumlah",i.tipVal||nf(i.value,0)],[i.color,"Porsi",nf(i.value/total*100,1)+"%"]])}/>`;
+    acc+=len; return el; }).join("");
+  const lg=items.map(i=>`<div class="lg" style="--c:${i.color}"><i></i>${esc(i.label)}<b>${esc(legendVal?legendVal(i,total):nf(i.value,0))}</b></div>`).join("");
+  return `<div class="donut-wrap"><div class="donut"><svg viewBox="0 0 200 200" role="img" aria-label="Donut chart">${segs}</svg><div class="donut-center"><b>${esc(center)}</b><small>${esc(sub)}</small></div></div><div class="legend">${lg}</div></div>`;
+}
+
+/* Horizontal bars (satu seri) */
+function hbars(items,{fmt=fmtC,tipLabel="Nilai"}={}){
+  if(!items.length) return empty();
+  const max=Math.max(...items.map(i=>i.value),1);
+  return `<div class="hbars">`+items.map((i,k)=>{
+    const col=i.color||"var(--c1)", w=Math.max(i.value/max*100,1.5);
+    return `<div class="hb-row" ${tip(i.label,[[col,tipLabel,i.text||fmt(i.value)]].concat(i.extra||[]))}><div class="hb-top"><span title="${esc(i.label)}">${esc(i.label)}</span><b>${esc(i.text||fmt(i.value))}</b></div><div class="hb-track"><span class="hb-fill" style="--c:${col};width:${w}%;animation-delay:${k*60}ms"></span></div></div>`;
+  }).join("")+`</div>`;
+}
+
+/* Column chart (1–2 seri). series:[{name,color,values,colors?}] */
+function colChart(cats,series,{fmtTick=fmtAxis,fmtVal=fmtC,tipExtra,ticks=4,legend=true,W=680}={}){
+  if(!cats.length) return empty();
+  const rot=cats.length>7, H=rot?290:250, L=48, R=8, T=14, B=rot?78:34, pw=W-L-R, ph=H-T-B;
+  const max=niceMax(Math.max(...series.flatMap(s=>s.values),0)||1);
+  const band=pw/cats.length, nS=series.length, bw=Math.min(40,(band*.64-(nS-1)*3)/nS);
+  const step=cats.length>14?2:1;
+  let g="";
+  for(let t=0;t<=ticks;t++){
+    const v=max/ticks*t, y=T+ph-(v/max*ph);
+    g+=`<line class="${t?"ax-line":"ax-base"}" x1="${L}" x2="${W-R}" y1="${y}" y2="${y}"/><text x="${L-8}" y="${y+4}" text-anchor="end">${esc(fmtTick(v))}</text>`;
+  }
+  cats.forEach((c,i)=>{
+    const cx=L+band*i+band/2, totalW=bw*nS+(nS-1)*3;
+    const rows=series.map(s=>[s.colors?s.colors[i]:s.color,s.name,s.values[i]?fmtVal(s.values[i]):"—"]).concat(tipExtra?tipExtra(i):[]);
+    let bars="";
+    series.forEach((s,k)=>{
+      const v=s.values[i]||0, h=Math.max(v/max*ph,v>0?2:0), x=cx-totalW/2+k*(bw+3), y=T+ph-h, rr=Math.min(5,bw/2,h);
+      if(h>0) bars+=`<path class="bar" style="fill:${s.colors?s.colors[i]:s.color};animation-delay:${i*35}ms" d="M${x},${y+h}V${y+rr}Q${x},${y} ${x+rr},${y}H${x+bw-rr}Q${x+bw},${y} ${x+bw},${y+rr}V${y+h}Z"/>`;
+    });
+    g+=`<g class="col" ${tip(c.tipTitle||c.label||c,rows)}><rect class="hit" x="${L+band*i}" y="${T}" width="${band}" height="${ph}"/>${bars}</g>`;
+    if(i%step===0){
+      const lab=esc(c.label||c), ly=T+ph+18;
+      g+=rot?`<text transform="translate(${cx+4},${ly-4}) rotate(-40)" text-anchor="end">${lab}</text>`:`<text x="${cx}" y="${ly}" text-anchor="middle">${lab}</text>`;
+    }
+  });
+  const lg=(legend&&series.length>1)?`<div class="legend row">${series.map(s=>`<div class="lg" style="--c:${s.color}"><i></i>${esc(s.name)}</div>`).join("")}</div>`:"";
+  return lg+`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Column chart">${g}</svg>`;
+}
+const legendRow = items => `<div class="legend row">${items.map(([c,t])=>`<div class="lg" style="--c:${c}"><i></i>${esc(t)}</div>`).join("")}</div>`;
+
+/* Tooltip global */
+(function(){
+  const tt=document.getElementById("tooltip"); let cur=null;
+  const place=e=>{ const w=tt.offsetWidth,h=tt.offsetHeight; let x=e.clientX+16,y=e.clientY+16;
+    if(x+w>innerWidth-8) x=e.clientX-w-16; if(y+h>innerHeight-8) y=e.clientY-h-16; tt.style.left=Math.max(8,x)+"px"; tt.style.top=Math.max(8,y)+"px"; };
+  document.addEventListener("mouseover",e=>{
+    const el=e.target.closest&&e.target.closest("[data-tip]"); if(!el){ if(cur){tt.classList.remove("show");cur=null;} return; }
+    if(el===cur) return; cur=el;
+    try{ const d=JSON.parse(el.getAttribute("data-tip"));
+      tt.innerHTML=`<b>${esc(d.t)}</b>`+d.r.map(r=>`<div class="tt-row" style="--c:${r[0]}"><i></i><span>${esc(r[1])}</span><strong>${esc(r[2])}</strong></div>`).join("");
+      tt.classList.add("show"); place(e);
+    }catch(_){}
+  });
+  document.addEventListener("mousemove",e=>{ if(cur) place(e); });
+  document.addEventListener("mouseleave",()=>{tt.classList.remove("show");cur=null;});
+  document.addEventListener("scroll",()=>{tt.classList.remove("show");cur=null;},true);
+})();
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function groupSum(list,key,valKey="NILAI KONTRAK",fallback="Belum diisi"){
+  const m={}; list.forEach(p=>{ const k=clean(p[key])||fallback; m[k]=m[k]||{sum:0,n:0}; m[k].sum+=Number(p[valKey])||0; m[k].n++; });
+  return Object.entries(m).map(([label,v])=>({label,value:v.sum,n:v.n})).sort((a,b)=>b.value-a.value);
+}
+function parseGpm(v){
+  if(v===null||v===undefined||v==="") return 0;
+  let n = typeof v==="number" ? v : parseFloat(String(v).replace("%","").replace(",","."));
+  if(!isFinite(n)||n===0) return 0;
+  return (typeof v==="number" && Math.abs(n)<=1) ? n*100 : n;
+}
+
+function gpmCell(v){ const n=parseGpm(v); return n?nf(n,2)+"%":"-"; }
+function renderAlerts(){
+  const all=contractAlerts(), c={safe:0,warning:0,urgent:0,expired:0}; all.forEach(a=>c[a.level]++);
+  $('alertSafe').textContent=c.safe; $('alert90').textContent=c.warning; $('alert30').textContent=c.urgent; $('alertExpired').textContent=c.expired;
+  const alerts=all.filter(a=>a.level!=='safe').sort((a,b)=>a.days-b.days); $('alertBadge').textContent=alerts.length; $('topAlertCount').textContent=alerts.length;
+  $('alertList').innerHTML=alerts.length?alerts.map(a=>`<div class="alert-item ${a.level}"><div class="alert-main"><div class="alert-icon">${a.level==='expired'?'🔴':a.level==='urgent'?'🟠':'🟡'}</div><div><strong>${esc(a['NAMA PROJECT']||'-')}</strong><div class="alert-meta">${esc(a['NO ALISA']||'-')} • ${esc(a['NAMA AM']||'-')}</div><div class="alert-meta">Berakhir: ${a.end.toLocaleDateString('id-ID')} • ${a.level==='expired'?'Lewat '+Math.abs(a.days)+' hari':a.days+' hari lagi'}</div></div></div><div class="alert-actions"><span class="status ${a.level==='expired'?'neutral':'warn'}">${alertLabel(a)}</span><button class="icon-btn" onclick="emailAlert(contractAlerts().find(x=>x.index===${a.index}))">📧 Email</button><button class="icon-btn" onclick="whatsappAlert(contractAlerts().find(x=>x.index===${a.index}))">💬 WhatsApp</button><button class="icon-btn" onclick="detailAlert(${a.index})">Detail</button></div></div>`).join(''):'<div class="empty">✓ Tidak ada alert kontrak saat ini.</div>';
+
+  // charts
+  const lv=[["Aman","safe","var(--lvl-safe)"],["Reminder 3 Bulan","warning","var(--lvl-warning)"],["Urgent","urgent","var(--lvl-urgent)"],["Expired","expired","var(--lvl-expired)"]];
+  $('chartAlert').innerHTML=donut(lv.map(([l,k,col])=>({label:l,value:c[k],color:col,tipLabel:"Kontrak"})),{center:String(all.length),sub:"kontrak"});
+  const top=alerts.slice(0,8);
+  $('chartDays').innerHTML=top.length?hbars(top.map(a=>({
+      label:a['NAMA PROJECT']||a['NO ALISA']||'-', value:Math.abs(a.days)||0.5,
+      color:`var(--lvl-${a.level})`, text:a.level==='expired'?`Lewat ${Math.abs(a.days)} hari`:`${a.days} hari lagi`,
+      extra:[[`var(--lvl-${a.level})`,"Berakhir",a.end.toLocaleDateString('id-ID')],[`var(--lvl-${a.level})`,"Level",alertLabel(a)]]
+    })),{tipLabel:"Sisa waktu"}):empty("✓ Tidak ada kontrak yang perlu ditindaklanjuti.");
+}
+
+function renderCrsrCharts(){
+  const all=getCrsrData();
+  const sum=k=>all.reduce((a,x)=>a+(Number(x[k])||0),0);
+  const done=all.filter(x=>clean(x["STATUS CR/SR"]).toLowerCase().includes("done")).length;
+  $("kCrsrTotal").textContent=all.length;
+  $("kCrsrAwal").textContent=fmtC(sum("REVENUE AWAL"));
+  $("kCrsrSetelah").textContent=fmtC(sum("REVENUE SETELAH CR/SR"));
+  $("kCrsrDone").textContent=done;
+  $("kCrsrDoneSub").textContent=all.length?`${nf(done/all.length*100,0)}% selesai diproses`:"selesai diproses";
+  if(!all.length){ ["chartCrsrRev","chartCrsrStatus","chartGpm"].forEach(id=>$(id).innerHTML=empty("Belum ada data CR/SR.")); return; }
+
+  const seen={}; const cats=all.map(x=>{ const a=clean(x["NO ALISA"])||"-"; seen[a]=(seen[a]||0)+1;
+    return {label:seen[a]>1?`${a} ·${seen[a]}`:a, tipTitle:clean(x.PROJECT)||a}; });
+  $("chartCrsrRev").innerHTML=colChart(cats,[
+    {name:"Revenue Awal",color:"var(--c1)",values:all.map(x=>Number(x["REVENUE AWAL"])||0)},
+    {name:"Revenue Setelah CR/SR",color:"var(--c2)",values:all.map(x=>Number(x["REVENUE SETELAH CR/SR"])||0)}
+  ],{tipExtra:i=>[["var(--c-other)","Proses / Status",`${clean(all[i].PROSES)||"-"} • ${clean(all[i]["STATUS CR/SR"])||"-"}`]]});
+
+  const st={}; all.forEach(x=>{const s=clean(x["STATUS CR/SR"])||"Belum diisi"; st[s]=(st[s]||0)+1;});
+  const labs=Object.keys(st), cols=statusColors(labs);
+  $("chartCrsrStatus").innerHTML=donut(labs.map((l,i)=>({label:l,value:st[l],color:cols[i],tipLabel:"Record"})),{center:String(all.length),sub:"CR/SR"});
+
+  const gb=all.map(x=>parseGpm(x["GPM BEFORE CR/SR"])), ga=all.map(x=>parseGpm(x["GPM AFTER CR/SR"]));
+  const p=v=>v?nf(v,2)+"%":"belum terisi";
+  const has=gb.some(Boolean)||ga.some(Boolean);
+  $("chartGpm").innerHTML=has?colChart(cats,[
+    {name:"GPM Before",color:"var(--c1)",values:gb},{name:"GPM After",color:"var(--c3)",values:ga}
+  ],{fmtTick:v=>nf(v,0)+"%",fmtVal:v=>nf(v,2)+"%",ticks:4,W:1100}):empty("Belum ada nilai GPM yang terisi.");
+}
+
+function render(animate=false){
+  document.body.classList.toggle("noanim",!animate);
+  fillFilters();
+  const data=getFiltered();
+  const total=data.reduce((a,p)=>a+(Number(p["NILAI KONTRAK"])||0),0);
+  const goN=data.filter(p=>clean(p["STATUS/PROGRESS"]).toLowerCase().includes("go")).length;
+  $("kpiProjects").textContent=data.length;
+  $("kpiValue").textContent=fmtC(total);
+  $("kpiValueFull").textContent=money(total);
+  $("kpiGo").textContent=goN;
+  $("kpiGoPct").textContent=data.length?`${nf(goN/data.length*100,0)}% dari total project`:"project berstatus GO";
+  $("kpiCrsr").textContent=savedCrsr().length;
+
+  // status donut
+  const status={};
+  data.forEach(p=>{const s=clean(p["STATUS/PROGRESS"])||"Belum diisi";status[s]=(status[s]||0)+1;});
+  const sl=Object.keys(status).sort((a,b)=>status[b]-status[a]), sc=statusColors(sl);
+  $("statusBars").innerHTML=donut(sl.map((l,i)=>({label:l,value:status[l],color:sc[i],tipLabel:"Project"})),{center:String(data.length),sub:"project"});
+
+  // kontrak berakhir per bulan
+  const al=contractAlerts().filter(a=>data.includes(projects[a.index]));
+  if(!al.length){ $("chartExpiry").innerHTML=empty("Tanggal akhir kontrak belum terbaca dari JANGKA WAKTU."); }
+  else{
+    const key=d=>d.getFullYear()*12+d.getMonth(), bucket={};
+    al.forEach(a=>{const k=key(a.end); bucket[k]=bucket[k]||{v:0,n:0}; bucket[k].v+=Number(a["NILAI KONTRAK"])||0; bucket[k].n++;});
+    const ks=Object.keys(bucket).map(Number), k0=Math.min(...ks), k1=Math.max(...ks), nowK=key(new Date());
+    const cats=[],vals=[],cols=[],ns=[];
+    for(let k=k0;k<=k1;k++){ const y=Math.floor(k/12), m=k%12;
+      cats.push({label:`${MONTHS[m]} ${String(y).slice(2)}`,tipTitle:`${MONTHS[m]} ${y}`});
+      vals.push(bucket[k]?.v||0); ns.push(bucket[k]?.n||0); cols.push(k<nowK?"var(--c-other)":"var(--c1)"); }
+    const near=al.filter(a=>a.days>=0&&a.days<=90).length, exp=al.filter(a=>a.days<0).length;
+    $("chartExpiry").innerHTML=legendRow([["var(--c1)","Bulan ini & mendatang"],["var(--c-other)","Sudah lewat"]])+
+      colChart(cats,[{name:"Nilai kontrak",color:"var(--c1)",colors:cols,values:vals}],{tipExtra:i=>[["var(--c-other)","Jumlah project",String(ns[i])]],legend:false})+
+      `<div class="insight"><b>${near}</b> kontrak berakhir dalam 90 hari ke depan · <b>${exp}</b> kontrak sudah melewati masa berlaku.</div>`;
+  }
+
+  // product / user / scheme / AM
+  const prod=groupSum(data,"PRODUCT");
+  $("chartProduct").innerHTML=hbars(prod.map((x,i)=>({label:x.label,value:x.value,color:catColor(i),extra:[[catColor(i),"Jumlah project",String(x.n)]]})));
+  const usr=groupSum(data,"USER","NILAI KONTRAK","Tanpa user");
+  const top=usr.slice(0,6);
+  $("chartUser").innerHTML=hbars(top.map((x,i)=>({label:x.label,value:x.value,color:"var(--c1)",extra:[["var(--c1)","Jumlah project",String(x.n)]]})));
+  const sch=groupSum(data,"BUSINESS SCHEME");
+  $("chartScheme").innerHTML=donut(sch.map((x,i)=>({label:x.label,value:x.n,color:catColor(i),tipLabel:"Project",tipVal:`${x.n} • ${fmtC(x.value)}`,_v:x.value})),{center:String(data.length),sub:"project",legendVal:i=>`${i.value} • ${fmtC(i._v)}`});
+  const am=groupSum(data,"NAMA AM");
+  $("chartAM").innerHTML=hbars(am.map((x,i)=>({label:x.label,value:x.value,color:catColor(i),extra:[[catColor(i),"Jumlah project",String(x.n)]]})));
+
+  // dokumen
+  const docs=[["ALISA","ALISA"],["BRIDGING DOCUMENT (MoU/BA)","Bridging"],["DOKUMEN DEAL","Dokumen Deal"],["PKS","PKS"],["CLOSING DOCUMENT","Closing"],["PENAGIHAN","Penagihan"]];
+  $("docSummary").innerHTML=docs.map(([k,l])=>{
+    const t=data.length, done=data.filter(p=>clean(p[k]).toLowerCase().includes("done")).length, pct=t?Math.round(done/t*100):0;
+    return `<div class="doc-item" ${tip(l,[["var(--c3)","Selesai",`${done} dari ${t}`]])}><div class="ring" style="--p:${pct}"><b>${pct}%</b></div><div><span>${l}</span><strong>${done}/${t}</strong><small>DONE</small></div></div>`;
+  }).join("");
+
+  $("dashboardTable").innerHTML=data.slice(0,8).map(p=>rowDashboard(p)).join("") || emptyRow(8);
+  $("projectTable").innerHTML=data.map((p,i)=>rowProject(p,i)).join("") || emptyRow(11);
+  $("projectCount").textContent=`${data.length} data`;
+  const allCrsr = getCrsrData();
+  $("crsrTable").innerHTML=allCrsr.map((x,i)=>rowCrsr(x,i)).join("") || emptyRow(12);
+  $("crsrCount").textContent=`${allCrsr.length} data`;
+  renderAlerts();
+  renderCrsrCharts();
+}
+function rowDashboard(p) {
+  const cr=savedCrsr().find(x=>clean(x["NO ALISA"])===clean(p["NO ALISA"]));
+  return `<tr><td>${esc(p.NO)}</td><td><b>${esc(p["NO ALISA"])}</b></td><td class="project-name">${esc(p["NAMA PROJECT"])}</td><td>${esc(p["NAMA AM"])}</td><td>${money(p["NILAI KONTRAK"])}</td><td><span class="status ${statusClass(p["STATUS/PROGRESS"])}">${esc(p["STATUS/PROGRESS"])}</span></td><td>${cr?`<span class="status ok">${esc(cr["PROSES"])}</span>`:"-"}</td><td><button class="icon-btn" onclick="detailByAlisa('${esc(p["NO ALISA"])}')">Detail</button></td></tr>`;
+}
+function rowProject(p,i) {
+  const idx=projects.indexOf(p);
+  return `<tr><td>${esc(p.NO)}</td><td>${esc(p["NAMA AM"])}</td><td><b>${esc(p["NO ALISA"])}</b></td><td class="project-name">${esc(p["NAMA PROJECT"])}</td><td>${esc(p.PRODUCT)}</td><td>${esc(p.USER)}</td><td>${money(p["NILAI KONTRAK"])}</td><td><span class="status ${statusClass(p["STATUS/PROGRESS"])}">${esc(p["STATUS/PROGRESS"])}</span></td><td>${esc(p.PKS)}</td><td>${esc(p.PENAGIHAN)}</td><td><button class="icon-btn" onclick="detailProject(${idx})">Detail</button> <button class="icon-btn" onclick="editProject(${idx})">Edit</button> <button class="icon-btn danger" onclick="deleteProject(${idx})">Hapus</button></td></tr>`;
+}
+function rowCrsr(x,i) {
+  return `<tr><td>${esc(x.NO)}</td><td>${esc(x["NAMA AM"])}</td><td>${esc(x.PROSES)}</td><td><b>${esc(x["NO ALISA"])}</b></td><td class="project-name">${esc(x.PROJECT)}</td><td>${gpmCell(x["GPM BEFORE CR/SR"])}</td><td>${gpmCell(x["GPM AFTER CR/SR"])}</td><td>${money(x["REVENUE AWAL"])}</td><td>${money(x["REVENUE SETELAH CR/SR"])}</td><td><span class="status ${statusClass(x["STATUS CR/SR"])}">${esc(x["STATUS CR/SR"])}</span></td><td>${esc(x.KET)}</td><td><button class="icon-btn" onclick="detailCrsr(${i})">Detail</button> <button class="icon-btn" onclick="editCrsr(${i})">Edit</button> <button class="icon-btn danger" onclick="deleteCrsr(${i})">Hapus</button></td></tr>`;
+}
+function emptyRow(n) { return `<tr><td colspan="${n}" class="empty">Tidak ada data yang sesuai filter.</td></tr>`; }
+
+
+function switchView(view) {
+  activeView=view;
+  document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+  ["dashboard","projects","crsr","alerts"].forEach(v=>$(v+"View").classList.toggle("hidden",v!==view));
+  $("pageTitle").textContent = view==="dashboard" ? "Dashboard Project" : view==="projects" ? "Data Project" : view==="crsr" ? "CR/SR Monitoring" : "Contract Alerts";
+  const el=$(view+"View"); el.classList.remove("view-anim"); void el.offsetWidth; el.classList.add("view-anim");
+  render(true);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function openForm(index=null) {
+  $("modal").classList.add("show");
+  $("modalTitle").textContent=index===null?"Tambah Data Project":"Edit Data Project";
+  $("editIndex").value=index===null?"":index;
+  $("projectForm").reset();
+  if(index!==null) {
+    const p=projects[index];
+    document.querySelectorAll("#projectForm [name]").forEach(el=>{ if(p[el.name]!==undefined) el.value=p[el.name] ?? ""; });
+  }
+}
+function closeForm(){ $("modal").classList.remove("show"); }
+
+window.editProject = i => openForm(i);
+window.deleteProject = i => {
+  if(!confirm("Hapus data project ini?")) return;
+  projects.splice(i,1);
+  localStorage.setItem("aispmProjects",JSON.stringify(projects));
+  render();
+};
+window.detailByAlisa = alisa => {
+  const p=projects.find(x=>clean(x["NO ALISA"])===clean(alisa));
+  if(p) detailProject(projects.indexOf(p));
+};
+
+window.detailProject = index => {
+  const p=projects[index];
+  if(!p) return;
+  const related=getCrsrData().filter(x=>clean(x["NO ALISA"])===clean(p["NO ALISA"]));
+  const alert=contractAlerts().find(x=>x.index===index);
+  $("detailTitle").textContent=p["NAMA PROJECT"]||p["NO ALISA"]||"Detail Project";
+  $("detailBody").innerHTML=`
+    <div class="detail-summary">
+      <div><span>No Alisa</span><strong>${esc(p["NO ALISA"]||"-")}</strong></div>
+      <div><span>AM</span><strong>${esc(p["NAMA AM"]||"-")}</strong></div>
+      <div><span>Status</span><strong><span class="status ${statusClass(p["STATUS/PROGRESS"])}">${esc(p["STATUS/PROGRESS"]||"-")}</span></strong></div>
+      <div><span>Nilai Kontrak</span><strong>${money(p["NILAI KONTRAK"])}</strong></div>
+    </div>
+    <h3 class="detail-section">📁 Data Project</h3>
+    <div class="detail-grid">${Object.entries(p).filter(([k])=>k!=="NO").map(([k,v])=>`<div><small>${esc(k)}</small><strong>${esc(v) || "-"}</strong></div>`).join("")}</div>
+    <h3 class="detail-section">🔄 CR/SR Monitoring (${related.length})</h3>
+    ${related.length ? `<div class="detail-table"><table><thead><tr><th>Proses</th><th>Status</th><th>GPM Before</th><th>GPM After</th><th>Revenue Awal</th><th>Revenue Setelah</th><th>Target Closing</th><th>Actual Closing</th><th>Aksi</th></tr></thead><tbody>${related.map(x=>{const ri=getCrsrData().indexOf(x);return `<tr><td>${esc(x.PROSES||"-")}</td><td><span class="status ${statusClass(x["STATUS CR/SR"])}">${esc(x["STATUS CR/SR"]||"-")}</span></td><td>${esc(x["GPM BEFORE CR/SR"]||"-")}</td><td>${esc(x["GPM AFTER CR/SR"]||"-")}</td><td>${money(x["REVENUE AWAL"])}</td><td>${money(x["REVENUE SETELAH CR/SR"])}</td><td>${esc(x["TARGET CLOSING"]||"-")}</td><td>${esc(x["ACTUAL CLOSING"]||"-")}</td><td><button class="icon-btn" onclick="detailCrsr(${ri})">Detail</button></td></tr>`}).join("")}</tbody></table></div>` : `<p class="muted">Belum ada data CR/SR yang terhubung dengan No Alisa ini.</p>`}
+    <h3 class="detail-section">🔔 Contract Alert</h3>
+    ${alert ? `<div class="detail-alert ${alert.level}"><div><strong>${esc(alertLabel(alert))}</strong><span>Berakhir ${alert.end.toLocaleDateString('id-ID')} • ${alert.level==='expired'?'Lewat '+Math.abs(alert.days)+' hari':alert.days+' hari lagi'}</span></div><button class="icon-btn" onclick="detailAlert(${alert.index})">Lihat Alert</button></div>` : `<p class="muted">Tidak ada alert kontrak untuk project ini.</p>`}`;
+  $("detailModal").classList.add("show");
+};
+
+window.detailCrsr = index => {
+  const x=getCrsrData()[index];
+  if(!x) return;
+  const p=projects.find(p=>clean(p["NO ALISA"])===clean(x["NO ALISA"]));
+  $("detailTitle").textContent=`CR/SR • ${x.PROJECT||x["NO ALISA"]||"Detail"}`;
+  $("detailBody").innerHTML=`
+    <div class="detail-summary">
+      <div><span>Proses</span><strong>${esc(x.PROSES||"-")}</strong></div>
+      <div><span>No Alisa</span><strong>${esc(x["NO ALISA"]||"-")}</strong></div>
+      <div><span>Status</span><strong><span class="status ${statusClass(x["STATUS CR/SR"])}">${esc(x["STATUS CR/SR"]||"-")}</span></strong></div>
+      <div><span>Project</span><strong>${esc(x.PROJECT||"-")}</strong></div>
+    </div>
+    <h3 class="detail-section">🔄 Detail CR/SR</h3>
+    <div class="detail-grid">${Object.entries(x).filter(([k])=>k!=="NO").map(([k,v])=>`<div><small>${esc(k)}</small><strong>${esc(v) || "-"}</strong></div>`).join("")}</div>
+    <h3 class="detail-section">📁 Project Terkait</h3>
+    ${p ? `<div class="detail-alert"><div><strong>${esc(p["NAMA PROJECT"]||"-")}</strong><span>${esc(p["NAMA AM"]||"-")} • ${money(p["NILAI KONTRAK"])}</span></div><button class="icon-btn" onclick="detailProject(${projects.indexOf(p)})">Lihat Project</button></div>` : `<p class="muted">Project induk tidak ditemukan.</p>`}`;
+  $("detailModal").classList.add("show");
+};
+
+window.detailAlert = index => {
+  const a=contractAlerts().find(x=>x.index===Number(index));
+  if(!a) return;
+  const p=projects[a.index];
+  const related=getCrsrData().filter(x=>clean(x["NO ALISA"])===clean(a["NO ALISA"]));
+  $("detailTitle").textContent=`🔔 Alert • ${a["NAMA PROJECT"]||a["NO ALISA"]}`;
+  $("detailBody").innerHTML=`
+    <div class="detail-alert ${a.level}"><div><strong>${esc(alertLabel(a))}</strong><span>Jatuh tempo ${a.end.toLocaleDateString('id-ID')} • ${a.level==='expired'?'Lewat '+Math.abs(a.days)+' hari':a.days+' hari lagi'}</span></div><div class="alert-actions"><button class="icon-btn" onclick="emailAlert(contractAlerts().find(x=>x.index===${a.index}))">📧 Email</button><button class="icon-btn" onclick="whatsappAlert(contractAlerts().find(x=>x.index===${a.index}))">💬 WhatsApp</button></div></div>
+    <h3 class="detail-section">📁 Informasi Project</h3>
+    <div class="detail-grid">${Object.entries(p||a).filter(([k])=>k!=="NO").map(([k,v])=>`<div><small>${esc(k)}</small><strong>${esc(v) || "-"}</strong></div>`).join("")}</div>
+    <h3 class="detail-section">📅 Status Kontrak</h3>
+    <div class="detail-summary">
+      <div><span>Tanggal Berakhir</span><strong>${a.end.toLocaleDateString('id-ID')}</strong></div>
+      <div><span>Sisa Waktu</span><strong>${a.level==='expired'?'Expired':a.days+' hari'}</strong></div>
+      <div><span>Email PIC / AM</span><strong>${esc(a["EMAIL AM"]||"Belum diisi")}</strong></div>
+      <div><span>WhatsApp PIC / AM</span><strong>${esc(a["WHATSAPP AM"]||"Belum diisi")}</strong></div>
+    </div>
+    <h3 class="detail-section">🔄 CR/SR Terkait (${related.length})</h3>
+    ${related.length ? `<div class="detail-table"><table><thead><tr><th>Proses</th><th>Status</th><th>Target Closing</th><th>Actual Closing</th><th>Keterangan</th></tr></thead><tbody>${related.map(x=>`<tr><td>${esc(x.PROSES||"-")}</td><td><span class="status ${statusClass(x["STATUS CR/SR"])}">${esc(x["STATUS CR/SR"]||"-")}</span></td><td>${esc(x["TARGET CLOSING"]||"-")}</td><td>${esc(x["ACTUAL CLOSING"]||"-")}</td><td>${esc(x.KET||"-")}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Tidak ada data CR/SR terkait.</p>`}`;
+  $("detailModal").classList.add("show");
+};
+
+document.querySelectorAll(".nav-item").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
+$("openProjects").onclick=()=>switchView("projects");
+$("notificationBtn").onclick=()=>switchView("alerts");
+$("emailAllBtn").onclick=()=>{const a=contractAlerts().filter(x=>x.level!=="safe"); if(!a.length){alert("Tidak ada alert.");return;} emailAlert(a[0]);};
+$("addBtn").onclick=()=>openForm();
+$("closeModal").onclick=closeForm;
+$("cancelModal").onclick=closeForm;
+$("modalBackdrop").onclick=closeForm;
+$("closeDetail").onclick=()=>$("detailModal").classList.remove("show");
+$("detailBackdrop").onclick=()=>$("detailModal").classList.remove("show");
+["search","amFilter","statusFilter","productFilter"].forEach(id=>$(id).addEventListener("input",()=>render()));
+$("resetBtn").onclick=()=>{["search","amFilter","statusFilter","productFilter"].forEach(id=>$(id).value="");render();};
+
+$("projectForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target), obj={};
+  for(const [k,v] of fd.entries()) if(k!=="") obj[k]=v.trim();
+  obj.NO=obj.NO ? Number(obj.NO) : (Math.max(0,...projects.map(p=>Number(p.NO)).filter(Number.isFinite))+1);
+  obj["NILAI KONTRAK"]=obj["NILAI KONTRAK"] ? Number(obj["NILAI KONTRAK"]) : 0;
+  const idx=$("editIndex").value;
+  if(idx==="") projects.push(obj); else projects[Number(idx)]=obj;
+  localStorage.setItem("aispmProjects",JSON.stringify(projects));
+  closeForm(); render();
+});
+
+
+function openCrsrForm(index=null) {
+  $("crsrModal").classList.add("show");
+  $("crsrModalTitle").textContent = index===null ? "Tambah Data CR/SR" : "Edit Data CR/SR";
+  $("editCrsrIndex").value = index===null ? "" : index;
+  $("crsrForm").reset();
+  if(index!==null) {
+    const x=getCrsrData()[index];
+    document.querySelectorAll("#crsrForm [name]").forEach(el=>{
+      if(x[el.name]!==undefined) el.value=x[el.name] ?? "";
+    });
+  }
+}
+function closeCrsrForm(){ $("crsrModal").classList.remove("show"); }
+
+window.editCrsr = i => openCrsrForm(i);
+window.deleteCrsr = i => {
+  if(!confirm("Hapus data CR/SR ini?")) return;
+  crsrData.splice(i,1);
+  localStorage.setItem("aispmCrsrData",JSON.stringify(crsrData));
+  render();
+};
+
+$("addCrsrBtn").onclick=()=>openCrsrForm();
+$("closeCrsr").onclick=closeCrsrForm;
+$("cancelCrsr").onclick=closeCrsrForm;
+$("crsrBackdrop").onclick=closeCrsrForm;
+
+$("crsrForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target), obj={};
+  for(const [k,v] of fd.entries()) if(k!=="") obj[k]=v.trim();
+  obj.NO=obj.NO ? Number(obj.NO) : (Math.max(0,...getCrsrData().map(x=>Number(x.NO)).filter(Number.isFinite))+1);
+  obj["REVENUE AWAL"]=obj["REVENUE AWAL"] ? Number(obj["REVENUE AWAL"]) : 0;
+  obj["REVENUE SETELAH CR/SR"]=obj["REVENUE SETELAH CR/SR"] ? Number(obj["REVENUE SETELAH CR/SR"]) : 0;
+  const idx=$("editCrsrIndex").value;
+  if(idx==="") crsrData.push(obj); else crsrData[Number(idx)]=obj;
+  localStorage.setItem("aispmCrsrData",JSON.stringify(crsrData));
+  closeCrsrForm();
+  render();
+});
+
+
+/* ---------- Tema & init ---------- */
+(function(){
+  let t=null; try{ t=localStorage.getItem("mirasTheme"); }catch(_){}
+  if(!t) t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  document.documentElement.setAttribute("data-theme",t);
+  $("themeBtn").onclick=()=>{
+    const n=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+    document.documentElement.setAttribute("data-theme",n);
+    try{ localStorage.setItem("mirasTheme",n); }catch(_){}
+  };
+  $("todayLabel").textContent="• "+new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+})();
+render(true);
+setInterval(renderAlerts,60*60*1000);
+</script>
+</body>
+</html>
